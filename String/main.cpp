@@ -2,145 +2,155 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
-#include "String.h"
-#include "Tests.h"
-
 #include "catch.hpp"
 
-TEST_CASE("operation+") {
-	REQUIRE(strcmp((string("abcde")+"fghij").c_str(), "abcdefghij") == 0); // abcde + fghij = abcdefghij
-	REQUIRE(strcmp((string("abcde") + string("fghij")).c_str(), "abcdefghij") == 0); // abcde + fghij = abcdefghij
-	REQUIRE(strcmp((string("qwe rty") + "fgh ijk").c_str(), "qwe rtyfgh ijk") == 0); // qwe rty + fgh ijk = qwe rtyfgh ijk
-	REQUIRE(strcmp((string("qwerty") + "").c_str(), "qwerty") == 0); // qwerty + "" = qwerty
-	REQUIRE(strcmp((string("") + string("")).c_str(), "") == 0); // "" + "" = ""
+#include "String.h"
+#include "binary_string.h"
+#include "todo_string.h"
+
+// binary_string
+TEST_CASE("bin_constructor", "[binary_string]") { // тесты для конструктора
+	binary_string str1 = 15;
+	REQUIRE(str1.get_decimal() == 15);
+	REQUIRE(strcmp(str1.c_str(), "1111") == 0);
+	binary_string str2;
+	REQUIRE(str2.get_decimal() == 0);
+	REQUIRE(strcmp(str2.c_str(), "0") == 0);
 }
 
-TEST_CASE("operation-") {
-	REQUIRE(strcmp((string("abcde") - "bcd").c_str(), "ae") == 0); // abcde - bcd = ae
-	REQUIRE(strcmp((string("abcde") - string("bcd")).c_str(), "ae") == 0); // abcde - bcd = ae
-	REQUIRE(strcmp((string("abcde") - "abcde").c_str(), "") == 0); // abcde - abcde = ""
-	REQUIRE(strcmp((string("abcde") - "").c_str(), "abcde") == 0); // abcde - "" = abcde
-	REQUIRE(strcmp((string("abcde") - "qwerty").c_str(), "abcde") == 0); // abcde - qwerty = abcde
-	REQUIRE(strcmp((string("") - "qwerty").c_str(), "") == 0); // "" - qwerty = ""
-	REQUIRE(strcmp((string("") - "").c_str(), "") == 0); // "" - "" = ""
+TEST_CASE("bin_operator=", "[binary_string]") { // тесты для присваивания
+	binary_string str;
+	str = 15;
+	REQUIRE(str.get_decimal() == 15); // требуем совпадения десятичных значений
+	REQUIRE(strcmp(str.c_str(), "1111") == 0); // требуем совпадения двоичных значений
+	str = "1111";
+	REQUIRE(str.get_decimal() == 15);
+	REQUIRE(strcmp(str.c_str(), "1111") == 0);
+	str = -15;
+	REQUIRE(str.get_decimal() == -15);
+	REQUIRE(strcmp(str.c_str(), "-1111") == 0);
+
+	REQUIRE_THROWS_AS(str = "-0-221awd0", std::exception);
 }
 
-TEST_CASE("operation[]") {
-	string s = "abcdefghi";
+TEST_CASE("bin_operator+", "[binary_string]") {
+	binary_string s1 = 12;
+	binary_string s2 = 24;
+	REQUIRE((s1 + s2).get_decimal() == 36); // 12 + 24 = 36
+	REQUIRE(strcmp((s1 + s2).c_str(), "100100") == 0);
+	s1 = 15;
+	s2 = -15;
+	REQUIRE((s1 + s2).get_decimal() == 0); // 15 + (-15) = 0
+	REQUIRE(strcmp((s1 + s2).c_str(), "0") == 0);
+	s1 = -12;
+	s2 = -24;
+	REQUIRE((s1 + s2).get_decimal() == -36); // -12 + (-24) = 36
+	REQUIRE(strcmp((s1 + s2).c_str(), "-100100") == 0);
+}
+
+TEST_CASE("bin_operator-", "[binary_string]") {
+	binary_string s1 = 12;
+	binary_string s2 = 24;
+	REQUIRE((s1 - s2).get_decimal() == -12); // 12 - 24 = -12
+	REQUIRE(strcmp((s1 - s2).c_str(), "-1100") == 0);
+	s1 = 15;
+	s2 = 15;
+	REQUIRE((s1 - s2).get_decimal() == 0); // 15 - 15 = 0
+	REQUIRE(strcmp((s1 - s2).c_str(), "0") == 0);
+	s1 = -12;
+	s2 = -24;
+	REQUIRE((s1 - s2).get_decimal() == 12); // -12 - (-24) = 12
+	REQUIRE(strcmp((s1 - s2).c_str(), "1100") == 0);
+}
+
+TEST_CASE("bin_operator*", "[binary_string]") {
+	char* s;
+	binary_string s1 = 2;
+	binary_string s2 = 4;
+	s = (s1 * s2).c_str();
+	REQUIRE((s1 * s2).get_decimal() == 8); // 2*4=8
+	REQUIRE(strcmp(s, "1000") == 0);
+	delete s;
+	s1 = 123123;
+	s2 = 0;
+	s = (s1 * s2).c_str();
+	REQUIRE((s1 * s2).get_decimal() == 0); // 123123 * 0 = 0
+	REQUIRE(strcmp(s, "0") == 0);
+	delete s;
+	s1 = 2;
+	s2 = -4;
+	s = (s1 * s2).c_str();
+	REQUIRE((s1 * s2).get_decimal() == -8); // 2 * (-4) = -8
+	REQUIRE(strcmp((s1 * s2).c_str(), "-1000") == 0);
+	delete s;
+}
+
+
+// Оператор вывода достаточно тривиальный и тестился в прошлой лабе
+
+TEST_CASE("bin_operator>>", "[binary_string, istream]") {
+	binary_string s;
+
+	std::ofstream out("in.txt");  // Записываем данные в файл
+	if (!out.is_open()) throw std::exception("file was not opened");
+	out << "10001\n-10001\n12131";
+	out.close();
+
+	FILE* o = freopen("in.txt", "r", stdin); // Перенаправляем стандартный поток ввода из консоли в файл
 	
-	REQUIRE((s[0] == 'a' && s[0] == *(s.c_str()))); // s[0] = a
-	REQUIRE((s[2] == 'c' && s[2] == *(s.c_str() + 2))); // s[2] = c
-	REQUIRE((s[3] == 'd' && s[3] == *(s.c_str() + 3))); // s[3] = d
-	REQUIRE((s[6] == 'g' && s[6] == *(s.c_str() + 6)));  // s[6] = g
-	s[0] = 'R';
-	REQUIRE(*(s.c_str()) == 'R'); // s[0] = R
-}
+	std::cin >> s; // Считываем значения
+	REQUIRE(s.get_decimal() == 17); // Проверяем
 
-TEST_CASE("operation=") {
-	string s = "abcde";
-
-	REQUIRE(strcmp((s = "qwerty").c_str(), "qwerty") == 0); // присваиваем значение и проверяем вернувшееся значение
-	REQUIRE(strcmp(s.c_str(), "qwerty") == 0); // проверяем присвоилось ли
-
-	REQUIRE(strcmp((s = "").c_str(), "") == 0);
-	REQUIRE(strcmp(s.c_str(), "") == 0);
-	
-	REQUIRE(strcmp((s = string("qwerty")).c_str(), "qwerty") == 0);
-	REQUIRE(strcmp(s.c_str(), "qwerty") == 0);
-	
-	REQUIRE(strcmp((s = string("")).c_str(), "") == 0);
-	REQUIRE(strcmp(s.c_str(), "") == 0);
-}
-
-TEST_CASE("operation<<") {
-	// вывод через объект ostream (cout)
-	string s = "abcde";
-	FILE * F = freopen("stdout_file.txt", "w", stdout); // Перенаправляем стандартный поток вывода stdout из консоли в файл.
-														//Если тест будет пройден, то и при выводе в консоль, все будет работать
-	std::cout << s;
-	fclose(stdout);
-	F = freopen("CON", "w", stdout); // перенаправляем обратно в консоль
-
-	std::ifstream ist("stdout_file.txt"); // Проверим, те ли символы были записаны
-	char* str = new char[128];
-	ist.getline(str, 128);
-	ist.close();
-
-	REQUIRE(strcmp(s.c_str(), str) == 0);
-	delete[] str;
-
-	// вывод через объект ofstream (в файл)
-	std::ofstream ost("file.txt");
-	ost << s;
-	ost.close();
-
-	ist.open("file.txt"); // Проверим, те ли символы были записаны
-	str = new char[128];
-	ist.getline(str, 128);
-	ist.close();
-	REQUIRE(strcmp(s.c_str(), str) == 0);
-	delete[] str;
-}
-
-TEST_CASE("operation>>") {
-	string s;
-
-	// Ввод через объект istream (cin)
-	std::ofstream ost("stdin_file.txt"); // запишем символы в файл
-	ost << "abcde";
-	ost.close();
-
-	FILE* F = freopen("stdin_file.txt", "r", stdin); // Перенаправляем стандартный поток ввода stdin из консоли в файл 
-													//Если тест будет пройден, то и при вводе из консоли, все будет работать
 	std::cin >> s;
+	REQUIRE(s.get_decimal() == -17);
+
+	REQUIRE_THROWS_AS(std::cin >> s, std::exception); // введенная строка "12131" должна при вводе кидать исключение
+
 	fclose(stdin);
-	F = freopen("CON", "r", stdin); // Перенаправляем обратно в консоль
-	REQUIRE(strcmp(s.c_str(), "abcde") == 0);
-
-	//Ввод через объект ifstream (из файла)
-	ost.open("file.txt"); // запишем символы в файл
-	ost << "abcde";
-	ost.close();
-
-	std::ifstream ist("file.txt");
-	ist >> s;
-	ist.close();
-	REQUIRE(strcmp(s.c_str(), "abcde") == 0);
+	o = freopen("CON", "r", stdin); // Перенаправляем стандартный поток ввода из файла обратно в консоль
 }
 
-TEST_CASE("writing to binary file") {
-	string s = "abcde";
-	std::ofstream ost("file_bin.bin", std::ios::binary);
-	s.write_binary(ost); // Записываем с помощью  метода в файл
-	ost.close();
+// todo_string
+// методы данного класса тривиальны и не требуют проверки, кроме перегрузки операторов 
+TEST_CASE("todo_constructor", "[todo_string]") {
+	todo_string s;
+	REQUIRE(strcmp(s.c_str(), "") == 0); // Задачи нет
+	REQUIRE((!s.started() && !s.finished())); // Не начата и не закончена
+
+	todo_string s1("task");
+	REQUIRE(strcmp(s1.c_str(), "task") == 0); // Задача task
+	REQUIRE((!s1.started() && !s1.finished())); // Не начата и не закончена
+}
+
+TEST_CASE("todo_operator=", "[todo_string]") {
+	todo_string s;
+	s = "task";
+	REQUIRE(strcmp(s.c_str(), "task") == 0); // Задачи task
+	REQUIRE((!s.started() && !s.finished())); // Не начата и не закончена
+	todo_string s1("task2");
+	s1.start(); // Начали задачу
+	s = s1;
+	REQUIRE(strcmp(s.c_str(), "task2") == 0); // Задача task
+	REQUIRE((s.started() && !s.finished())); // Начата и не закончена
+}
+
+// Оператор ввода достаточно тривиальный и тестился в прошлой лабе
+TEST_CASE("todo_operator<<", "[todo_string, ostream]") {
+	todo_string s = "test a lab 2";
+	s.start();
+	std::ofstream out("out.txt");
+	out << s; // Выводим строку в поток
+	out.close();
+
+	time_t start_time = s.when_started(); // создаем эталонную строку для сравнения
+	string expected = "started: ";
+	expected.append(asctime(localtime(&start_time)));
+	expected.append("test a lab 2");
 	
-	std::ifstream ist("file_bin.bin", std::ios::binary);
-	size_t ml;
-	size_t l;
-	char c[6];
-	ist.read((char*)&ml, sizeof(size_t)); // руками считываем
-	ist.read((char*)&l, sizeof(size_t));
-	for (int i = 0; i < 6; i++) {
-		ist.read((char*)&c[i], sizeof(char));
-	}
-	ist.close();
-	REQUIRE((ml == s.max_length() && l == s.length() && strcmp(c, s.c_str()) == 0)); // проверяем, чтобы начальная строка полностью совпадала со считанными данными
-}
+	std::ifstream in("out.txt"); // считываем то, что выводили
+	char buf[128];
+	in.read(buf, 128);
+	*(buf + expected.length()) = '\0';
 
-TEST_CASE("reading from binary file") {
-	std::ofstream ost("file_bin.bin", std::ios::binary); // Запишем в файл данные для считывания
-	size_t ml = 16;
-	size_t l = 5;
-	const char* s = "abcde";
-	ost.write((char*)&ml, sizeof(size_t));
-	ost.write((char*)&l, sizeof(size_t));
-	ost.write(s, 6);
-	ost.close();
-
-	string str;
-	std::ifstream ist("file_bin.bin", std::ios::binary); // Считаем данные с помощью метода
-	str.read_binary(ist);
-	ist.close();
-	REQUIRE(strcmp(str.c_str(), "abcde") == 0); // Проверим чтобы начальные данные совпадали со считанной строкой
-
+	REQUIRE(strcmp(buf, expected.c_str()) == 0); // сравниваем
 }

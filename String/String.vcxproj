@@ -147,14 +147,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="binary_string.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="String.cpp" />
-    <ClCompile Include="Tests.cpp" />
+    <ClCompile Include="todo_string.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="binary_string.h" />
     <ClInclude Include="catch.hpp" />
     <ClInclude Include="String.h" />
-    <ClInclude Include="Tests.h" />
+    <ClInclude Include="todo_string.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

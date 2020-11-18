@@ -51,6 +51,7 @@ public:
 private:
 	static size_t _string_count;
 	const size_t initial_max_length = 16;
+protected:	
 	char* _str;
 	size_t _max_length;
 	size_t _length;

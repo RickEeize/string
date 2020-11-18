@@ -58,7 +58,7 @@ string::string(const string& str)
 string::~string()
 {
 	_string_count--;
-	delete[] _str;
+	delete _str;
 }
 
 /*
@@ -68,8 +68,9 @@ void string::append(const char* str)
 {
 	size_t len = strlen(str);
 	if (len + _length > _max_length){ // случай если суммарная длина больше выделенной памяти
-		while (len + _length > _max_length) _max_length *= 2; // увеличиваем выделенную память
-		allocate_and_cpy(_max_length);
+		size_t ml = _max_length;
+		while (len + _length > ml) ml *= 2; // увеличиваем выделенную память
+		allocate_and_cpy(ml);
 		char* tmp = _str + _length; // ставит указатель на конец текущей строки
 		for (size_t i = 0; i < len; i++) { //дописывает принятую строку в конец текущей
 			*(tmp + i) = *(str + i);
@@ -130,8 +131,9 @@ bool string::empty() const
 void string::assign(const char* str)
 {
 	_length = strlen(str);
-	while (_length > _max_length) _max_length *= 2; // увеличение максимальной памяти, если нужно
-	allocate_and_cpy(_max_length); // выделение этой новой памяти
+	size_t ml = _max_length;
+	while (_length > ml) ml *= 2; // увеличение максимальной памяти, если нужно
+	allocate_and_cpy(ml); // выделение этой новой памяти
 	strcpy(_str, str); // копирование строк
 }
 /*
