@@ -149,12 +149,14 @@
   <ItemGroup>
     <ClCompile Include="binary_string.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="stack.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="todo_string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binary_string.h" />
     <ClInclude Include="catch.hpp" />
+    <ClInclude Include="stack.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="todo_string.h" />
   </ItemGroup>
