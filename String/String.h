@@ -22,7 +22,7 @@ public:
 	size_t find(const char*) const;
 	size_t find(const string&) const;
 	string substr(size_t, size_t) const;
-	char* c_str() const;
+	virtual char* c_str() const;
 	void print() const;
 	static size_t get_string_count();
 	

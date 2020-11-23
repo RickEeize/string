@@ -15,6 +15,7 @@ public:
 	bool started() const;
 	time_t when_started() const;
 	time_t when_finished() const;
+	virtual char* c_str() const;
 
 	todo_string& operator=(const todo_string& other);
 	todo_string& operator=(const char* other);

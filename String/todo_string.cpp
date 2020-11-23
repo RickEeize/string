@@ -44,6 +44,25 @@ time_t todo_string::when_finished() const
 	return _end;
 }
 
+char* todo_string::c_str() const
+{
+	char* s = nullptr, *e = nullptr;
+	size_t sl = 0, el = 0;
+	if (started()) {
+		s = asctime(localtime(&_start));
+		sl = strlen(s);
+	}
+	if (finished()) {
+		e = asctime(localtime(&_end));
+		el = strlen(e);
+	}
+	string res;
+	if (sl) res.append(s);
+	if (el) res.append(e);
+	res.append(_str);
+	return res.c_str();
+}
+
 todo_string& todo_string::operator=(const todo_string& other)
 {
 	assign(other); //присваиваем задачу и время начала и завершения

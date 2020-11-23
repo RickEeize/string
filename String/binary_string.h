@@ -12,7 +12,7 @@ public:
 	binary_string(int decimal);
 	binary_string(const binary_string& other);
 	int get_decimal() const;
-	char* c_str() const;
+	virtual char* c_str() const;
 	binary_string& operator=(const binary_string& other);
 	binary_string& operator=(int decimal);
 	binary_string& operator=(const char* other);

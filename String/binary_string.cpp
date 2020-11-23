@@ -185,9 +185,9 @@ int binary_string::_str_to_dec(const char* str)
 	}
 	else neg = 0;
 	int result = 0;
-	int len = strlen(str);
+	size_t len = strlen(str);
 	for (int i = 0; i < len; i++) { // составление числа по бинарным цифрам
-		result += (str[i] - '0') * pow(2, len - 1 - i);
+		result += (str[i] - '0') * (int)pow(2, len - 1 - i);
 	}
 	return result * (neg ? -1 : 1); // в зависимости от флага отрицательности возвращаем либо отрицательное либо положительное число
 }
@@ -198,7 +198,7 @@ bool binary_string::_is_valid(const char* str)
 {
 	if (*str == '\0') return 0; // если строка пустая - она некорректна
 	if (!(*(str) == '-' || *(str) == '0' || *(str) == '1')) return 0; // первый символ может быть минус
-	int len = strlen(str);
+	size_t len = strlen(str);
 	for (int i = 1; i < len; i++) { // проверяем символы в строке (должны быть либо 0, либо 1)
 		if (!(*(str + i) == '0' || *(str + i) == '1')) return 0;
 	}

@@ -64,16 +64,21 @@ TEST_CASE("push, pop, print", "[stack, string]") {
 TEST_CASE("polymorphism, top", "[stack, string, binary_string, todo_string]") {
 	stack s;
 	string str = "this is string"; // создаем 3 объекта разных классов
-	binary_string bin_str = 19;
+	binary_string bin_str = -19;
 	todo_string todo_str = "do a test";
+	todo_str.start();
+	time_t st = todo_str.when_started();
 	s.push(todo_str); // добавляем их в стек
 	s.push(bin_str);
 	s.push(str);
 	REQUIRE(strcmp(s.top().c_str(), "this is string") == 0); // c_str() является функцией класса string и наследуется
 	s.pop();
-	REQUIRE(strcmp(s.top().c_str(), "10011") == 0); // классами binary_string и
+	REQUIRE(strcmp(s.top().c_str(), "-10011") == 0); // классами binary_string и
 	s.pop();
-	REQUIRE(strcmp(s.top().c_str(), "do a test") == 0); // todo_string
+	string req;
+	req.append(asctime(localtime(&st)));
+	req.append("do a test");
+	REQUIRE(strcmp(s.top().c_str(), req.c_str()) == 0); // время начала и todo_string
 }
 
 TEST_CASE("insert, delete", "[stack, string]") {
