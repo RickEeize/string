@@ -146,7 +146,7 @@ void string::assign(const string& str)
 */
 void string::insert(size_t pos, const char* str)
 {
-	if (pos > _length - 1) throw "wrong position"; // проверка правильности переданных данных
+	if (pos > _length - 1) throw str_exception("incorrect position"); // проверка правильности переданных данных
 	size_t len = strlen(str);
 	while (len + _length > _max_length) _max_length *= 2; // увеличение максимальной памяти 
 	allocate_and_cpy(_max_length); // выделение этой новой памяти
@@ -174,7 +174,7 @@ size_t string::find(const char* str) const
 		while (*(_str + i + j) == *(str + j)) j++; // Если символы строки и подстроки совпадают счетчик увеличивается
 		if (j >= len) return i; // если счетчик равен длине подстроки, то мы нашли первое вхождение
 	}
-	throw "no such substring"; // если ничего не нашли выбрасываем сообщение об этом
+	throw str_exception("no such substring"); // если ничего не нашли выбрасываем сообщение об этом
 }
 /*
 	Поиск позиции первого вхождения подстроки
@@ -188,7 +188,7 @@ size_t string::find(const string& str) const
 */
 string string::substr(size_t pos_begin, size_t length) const
 {
-	if (pos_begin + length > _length) throw "incorrect parameters"; // проверка правильности переданных данных
+	if (pos_begin + length > _length) throw str_exception("incorrect parameters"); // проверка правильности переданных данных
 	char* str = new char[length + 1]; // выделение памяти для подстроки
 	for (size_t i = 0; i < length; i++) // последовательно копируем символы в подстроку
 		*(str + i) = *(_str + pos_begin + i); 
